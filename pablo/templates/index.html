@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Inicio - Recetas{% endblock %}
+{% block content %}
+<h1>Recetas disponibles</h1>
+{% for receta in recetas %}
+    <div class="receta">
+        <h2>{{ receta.titulo }}</h2>
+        <p>{{ receta.descripcion }}</p>
+        <img src="{{ receta.foto }}" alt="Imagen de receta" width="300">
+        <video width="320" height="240" controls>
+            <source src="{{ receta.video }}" type="video/mp4">
+        </video>
+        <p>Subida por: {{ receta.autor }}</p>
+    </div>
+{% endfor %}
+{% endblock %}

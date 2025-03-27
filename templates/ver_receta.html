@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Ver Receta{% endblock %}
+
+{% block content %}
+<h2>{{ receta.titulo }}</h2>
+<p>{{ receta.descripcion }}</p>
+
+<!-- Mostrar las estrellas -->
+<form method="POST" action="{{ url_for('calificar', receta_id=receta._id) }}">
+    <div class="estrellas">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+    </div>
+    <input type="hidden" name="puntuacion" id="puntuacion">
+    <button type="submit">Calificar</button>
+</form>
+
+<!-- Mostrar la calificación promedio -->
+{% if receta.calificaciones %}
+    <p>Calificación promedio: 
+        {{ (receta.calificaciones | map(attribute='puntuacion') | sum / receta.calificaciones | length) | round(1) }} ★
+    </p>
+{% else %}
+    <p>Aún no hay calificaciones.</p>
+{% endif %}
+
+{% endblock %}

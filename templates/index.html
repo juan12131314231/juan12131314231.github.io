@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Recetas Disponibles{% endblock %}
+
+{% block content %}
+<h2>Recetas disponibles</h2>
+
+{% for receta in recetas %}
+    <div>
+        <h3>{{ receta.titulo }}</h3>
+        <p>{{ receta.descripcion }}</p>
+        
+        {% if receta.foto %}
+            <img src="{{ receta.foto }}" alt="Imagen de receta" width="200">
+        {% endif %}
+
+        <p>Subida por: {{ receta.autor }}</p>
+
+        <!-- Estrellas para calificar -->
+        <form method="POST" action="{{ url_for('calificar', receta_id=receta._id) }}">
+            <div class="estrellas">
+                <span data-value="1">★</span>
+                <span data-value="2">★</span>
+                <span data-value="3">★</span>
+                <span data-value="4">★</span>
+                <span data-value="5">★</span>
+            </div>
+            <input type="hidden" name="puntuacion" id="puntuacion_{{ receta._id }}">
+            <button type="submit">Calificar</button>
+        </form>
+
+        <!-- Mostrar la calificación promedio -->
+        {% if receta.calificaciones %}
+            <p>Calificación promedio: 
+                {{ (receta.calificaciones | map(attribute='puntuacion') | sum / receta.calificaciones | length) | round(1) }} ★
+            </p>
+        {% else %}
+            <p>Aún no hay calificaciones.</p>
+        {% endif %}
+
+        <hr>
+    </div>
+{% endfor %}
+
+{% endblock %}

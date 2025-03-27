@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Aplicación de Recetas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .estrellas {
+            font-size: 2rem;
+            color: gray;
+            cursor: pointer;
+        }
+        .estrellas span:hover,
+        .estrellas span.active {
+            color: gold;
+        }
+        .estrellas.desactivado span {
+            cursor: not-allowed;
+            color: gray !important;
+        }
+        .estrellas.desactivado span:hover {
+            color: gray !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mi Aplicación de Recetas</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('nueva_receta') }}">Nueva Receta</a>
+            {% if 'usuario' in session %}
+                <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+                <a href="{{ url_for('register') }}">Registrarse</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2025 Mi Aplicación de Recetas</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const estrellas = document.querySelectorAll(".estrellas span");
+            const inputPuntuacion = document.getElementById("puntuacion");
+            const contenedorEstrellas = document.querySelector(".estrellas");
+            
+            // Verificar si el usuario ya votó (esto debería venir del backend)
+            // En un caso real, esto se verificaría con una petición al servidor
+            const usuarioYaVoto = localStorage.getItem('haVotado') === 'true' || false;
+
+            if (usuarioYaVoto) {
+                desactivarEstrellas();
+                // Mostrar las estrellas que ya votó (valor debería venir del backend)
+                const puntuacionGuardada = localStorage.getItem('puntuacion') || 0;
+                pintarEstrellas(puntuacionGuardada, true);
+            }
+
+            if (estrellas.length > 0 && !usuarioYaVoto) {
+                estrellas.forEach(estrella => {
+                    estrella.addEventListener("mouseover", function () {
+                        resetEstrellas();
+                        pintarEstrellas(this.getAttribute("data-value"));
+                    });
+
+                    estrella.addEventListener("mouseout", function() {
+                        if (!inputPuntuacion.value) {
+                            resetEstrellas();
+                        }
+                    });
+
+                    estrella.addEventListener("click", function () {
+                        const valor = this.getAttribute("data-value");
+                        inputPuntuacion.value = valor;
+                        resetEstrellas();
+                        pintarEstrellas(valor, true);
+                        
+                        // Simular envío al servidor (en realidad sería una petición AJAX)
+                        enviarVoto(valor);
+                        
+                        // Desactivar estrellas después de votar
+                        desactivarEstrellas();
+                        
+                        // Guardar en localStorage que ya votó (simulación)
+                        localStorage.setItem('haVotado', 'true');
+                        localStorage.setItem('puntuacion', valor);
+                    });
+                });
+
+                function resetEstrellas() {
+                    estrellas.forEach(e => e.classList.remove("active"));
+                }
+
+                function pintarEstrellas(valor, permanente = false) {
+                    for (let i = 0; i < valor; i++) {
+                        estrellas[i].classList.add("active");
+                    }
+                }
+                
+                function desactivarEstrellas() {
+                    contenedorEstrellas.classList.add("desactivado");
+                    estrellas.forEach(estrella => {
+                        estrella.style.pointerEvents = "none";
+                    });
+                }
+                
+                function enviarVoto(valor) {
+                    // Aquí iría una petición AJAX al servidor para guardar el voto
+                    console.log(`Voto enviado: ${valor} estrellas`);
+                    // Ejemplo con fetch:
+                    /*
+                    fetch('/api/votar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            puntuacion: valor,
+                            receta_id: ID_DE_LA_RECETA
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Voto registrado:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                    */
+                }
+            }
+        });
+    </script>
+</body>
+</html>

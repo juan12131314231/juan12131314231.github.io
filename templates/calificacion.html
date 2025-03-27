@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Calificar Receta - Mi Aplicación de Recetas{% endblock %}
+
+{% block content %}
+<h2>Calificar Receta</h2>
+<form method="POST" action="{{ url_for('calificar', receta_id=receta._id) }}">
+    <div class="estrellas">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+    </div>
+    <input type="hidden" name="puntuacion" id="puntuacion" required>
+    <button type="submit">Calificar</button>
+</form>
+{% endblock %}

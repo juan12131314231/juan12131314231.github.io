@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Aplicación de Recetas{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Mi Aplicación de Recetas</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('nueva_receta') }}">Nueva Receta</a>
+            {% if 'usuario' in session %}
+                <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+                <a href="{{ url_for('register') }}">Registrarse</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2025 Mi Aplicación de Recetas</p>
+    </footer>
+</body>
+</html>
